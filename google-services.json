@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "321298326296",
+    "firebase_url": "https://chatdoctor-720b4.firebaseio.com",
+    "project_id": "chatdoctor-720b4",
+    "storage_bucket": "chatdoctor-720b4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:321298326296:android:e5ee633838e3445df7746d",
+        "android_client_info": {
+          "package_name": "com.cordova.chatdoctor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "321298326296-986foc4a1cr7f2jb2vj0n947nqtbgud3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgn8M3n3uMP5BxhBmHL1wo9v2CjMTLeYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "321298326296-986foc4a1cr7f2jb2vj0n947nqtbgud3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
