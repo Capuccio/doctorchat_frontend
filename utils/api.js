@@ -1,4 +1,4 @@
-const BASE_API = "lhttps://doctorchat-backend.herokuapp.com/";
+const BASE_API = "https://doctorchat-backend.herokuapp.com/";
 
 class Api {
   createHeader(data) {
