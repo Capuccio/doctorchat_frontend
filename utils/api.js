@@ -1,4 +1,4 @@
-const BASE_API = "localhost:5000";
+const BASE_API = "lhttps://doctorchat-backend.herokuapp.com/";
 
 class Api {
   createHeader(data) {
