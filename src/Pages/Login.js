@@ -34,12 +34,21 @@ const Login = props => {
       } else {
         let { msg } = answer;
 
-        try {
-          await AsyncStorage.setItem("userData", JSON.stringify(msg));
+        if (msg.status === 1) {
+          try {
+            await AsyncStorage.setItem("userData", JSON.stringify(msg));
 
-          props.navigation.navigate("Principal");
-        } catch (error) {
-          console.log("Error al Guardar: ", error);
+            props.navigation.navigate("Principal");
+          } catch (error) {
+            console.log("Error al Guardar: ", error);
+          }
+        } else if (msg.status === 2) {
+          Alert.alert(
+            "Verificación",
+            "Tu cuenta debe ser aceptada por otro doctor"
+          );
+        } else {
+          Alert.alert("Inhabilitada", "Tu doctor te ha Inhabilitado");
         }
       }
     }

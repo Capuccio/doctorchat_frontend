@@ -29,8 +29,24 @@ const LoginForm = props => {
       <View style={styles.Button}>
         <Button
           color="#3bd1c5"
-          title="Registrarse"
-          onPress={() => props.navigation.navigate("Register")}
+          title="Registrarse como Paciente"
+          onPress={() =>
+            props.navigation.navigate("Register", {
+              registerAs: 1
+            })
+          }
+        />
+      </View>
+
+      <View style={styles.Button}>
+        <Button
+          color="#3bd1c5"
+          title="Registrarse como Doctor"
+          onPress={() =>
+            props.navigation.navigate("Register", {
+              registerAs: 2
+            })
+          }
         />
       </View>
     </View>

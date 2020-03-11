@@ -8,9 +8,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   FlatList,
-  Clipboard,
-  Dimensions
+  Clipboard
 } from "react-native";
+import { Notifications } from "expo";
 import ChatHeader from "../Components/ChatHeader";
 import SendMessage from "../Components/SendMessage";
 import socket from "../../utils/socketconnection";
@@ -23,22 +23,21 @@ const Chat = props => {
   const [textChat, setTextChat] = useState("");
   const [editableText, setEditableText] = useState(false);
   const [patientData, setPatientData] = useState();
-  const [_isMounted, set_isMounted] = useState(false);
+  const [receiveChat, setReceiveChat] = useState(true);
   const chatList = useRef(null);
 
   useEffect(() => {
-    set_isMounted(true);
+    let isMounted = true;
     if (!socket.connected) {
       socket.open();
     }
+
     const getChat = async () => {
       let level = navigation.getParam("level", "1");
       let idPatient =
         level === 2
           ? navigation.getParam("idUser", "0")
           : navigation.getParam("myID", "0");
-
-      setPatientData(idPatient);
 
       let answer = await api.getChat(idPatient);
 
@@ -48,20 +47,35 @@ const Chat = props => {
       }
 
       if (answer.msg === null) {
-        setChat([]);
+        if (isMounted) {
+          setChat([]);
+        }
       } else {
-        setChat(answer.msg);
+        if (isMounted) {
+          setChat(answer.msg);
+        }
+      }
+
+      if (isMounted) {
+        setPatientData(idPatient);
       }
 
       setTimeout(() => {
         chatList.current.scrollToEnd();
-      }, 500);
+      }, 600);
 
       socket.emit("joinRoom", idPatient);
-      setEditableText(true);
+      if (isMounted) {
+        setEditableText(true);
+      }
     };
 
     getChat();
+
+    return () => {
+      isMounted = false;
+      setReceiveChat(false);
+    };
   }, []);
 
   const handleMessage = text => {
@@ -78,9 +92,12 @@ const Chat = props => {
     };
 
     arrayChat.push(newMessage);
-    setChat(arrayChat);
+    if (receiveChat) {
+      setChat(arrayChat);
+    }
 
     newMessage.idPatient = patientData;
+    newMessage.otherPerson = navigation.getParam("idUser", 0);
 
     socket.emit("newMessage", newMessage);
   };
@@ -88,15 +105,8 @@ const Chat = props => {
   socket.on("received", async msg => {
     let arrayChat = [...chat];
     arrayChat.push(msg);
-    if (_isMounted) {
+    if (receiveChat) {
       setChat(arrayChat);
-    }
-  });
-
-  socket.on("disconnect", async reason => {
-    if (reason != "io client disconnect") {
-      socket.connect();
-      socket.emit("joinRoom", patientData);
     }
   });
 
@@ -130,6 +140,7 @@ const Chat = props => {
       <ChatHeader
         idUser={navigation.getParam("idUser", "0")}
         level={navigation.getParam("level", "1")}
+        myID={navigation.getParam("myID", "0")}
         navigation={navigation}
         socket={socket}
       />

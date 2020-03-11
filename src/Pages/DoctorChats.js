@@ -5,36 +5,36 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import ChatsHeader from "../Components/ChatsHeader";
 
 const DoctorChats = props => {
+  const { navigation } = props;
   const [usersList, setUsersList] = useState([]);
 
   useEffect(() => {
-    const userList = async () => {
-      let answer = await api.userList();
+    let isMounted = true;
+    const patientsList = async () => {
+      let answer = await api.patientsList(navigation.getParam("myID", "D"));
 
       if (answer.error) {
         Alert.alert(answer.title, answer.msg);
       } else {
-        setUsersList(list => answer.msg);
+        if (isMounted) {
+          setUsersList(list => answer.msg);
+        }
       }
     };
 
-    userList();
+    patientsList();
+    return () => (isMounted = false);
   }, []);
 
   const moveToChat = idUser => {
-    props.navigation.navigate("Chat", {
-      myID: props.navigation.getParam("myID", "0"),
-      level: props.navigation.getParam("level", "2"),
+    navigation.navigate("Chat", {
+      myID: navigation.getParam("myID", "0"),
+      level: navigation.getParam("level", "2"),
       idUser
     });
   };
 
   const renderItem = ({ item }) => {
-    let unknow_picture =
-      item.genre == "M"
-        ? "https://i.imgur.com/ihhfBI4.jpg"
-        : "https://i.imgur.com/u3fYPb8.jpg";
-
     return (
       <TouchableOpacity
         activeOpacity={0.7}
@@ -42,20 +42,13 @@ const DoctorChats = props => {
         style={styles.List}
       >
         <View style={styles.ProfileContainer}>
-          {item.profilePicture != null ? (
-            <Image
-              source={{ uri: item.profilePicture }}
-              style={styles.ProfilePicture}
-            />
-          ) : (
-            <Image
-              source={{ uri: unknow_picture }}
-              style={styles.ProfilePicture}
-            />
-          )}
+          <Image
+            source={{ uri: item.profilePicture }}
+            style={styles.ProfilePicture}
+          />
         </View>
         <View>
-          <Text style={styles.PatientName}>
+          <Text>
             {item.name} {item.lastname}
           </Text>
         </View>
@@ -84,7 +77,11 @@ const DoctorChats = props => {
 
   return (
     <View>
-      <ChatsHeader />
+      <ChatsHeader
+        navigation={navigation}
+        myID={navigation.getParam("myID", "0")}
+      />
+
       <FlatList
         style={styles.ListContainer}
         data={usersList}
