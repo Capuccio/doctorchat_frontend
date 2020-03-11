@@ -23,23 +23,26 @@ const Register = props => {
       genre: "M",
       password: "",
       tokenNotification: "",
+      level: props.navigation.getParam("registerAs"),
+      status: props.navigation.getParam("registerAs"),
       doctor: "D"
     }
   });
   const [doctorList, setDoctorList] = useState([]);
 
   useEffect(() => {
-    let cancelQuery = false;
-
+    let isMounted = true;
     const getDoctorList = async () => {
-      let answer = await api.getDoctorList();
+      let answer = await api.getDoctorList(1);
 
       if (answer.error) {
         Alert.alert(answer.title, answer.msg);
         return;
       }
 
-      setDoctorList(answer.msg);
+      if (isMounted) {
+        setDoctorList(answer.msg);
+      }
     };
 
     const getTokenNotifications = async () => {
@@ -55,12 +58,14 @@ const Register = props => {
 
       let tokenNotification = await Notifications.getExpoPushTokenAsync();
 
-      setRegisterData({
-        form: {
-          ...registerData.form,
-          tokenNotification
-        }
-      });
+      if (isMounted) {
+        setRegisterData({
+          form: {
+            ...registerData.form,
+            tokenNotification
+          }
+        });
+      }
 
       return;
     };
@@ -68,9 +73,7 @@ const Register = props => {
     getTokenNotifications();
     getDoctorList();
 
-    return () => {
-      cancelQuery = true;
-    };
+    return () => (isMounted = false);
   }, []);
 
   const changeText = (inputKey, inputValue) => {
@@ -82,14 +85,27 @@ const Register = props => {
     });
   };
 
+  const validateDoctor = registerAs => {
+    var answer;
+    if (registerAs === 1) {
+      answer = registerData.form.doctor == "D" ? true : false;
+    } else {
+      answer = false;
+    }
+
+    return answer;
+  };
+
   const handleRegister = async () => {
+    let registerAs = props.navigation.getParam("registerAs");
+
     if (
       !registerData.form.name.trim() ||
       !registerData.form.lastname.trim() ||
       !registerData.form.email.trim() ||
       !registerData.form.birthday.trim() ||
       !registerData.form.password.trim() ||
-      registerData.form.doctor === "D"
+      validateDoctor(registerAs)
     ) {
       Alert.alert(
         "Campos vacíos",
@@ -110,6 +126,7 @@ const Register = props => {
           handleRegister={handleRegister}
           navigation={props.navigation}
           doctorList={doctorList}
+          registerAs={props.navigation.getParam("registerAs")}
         />
       </ScrollView>
     </SafeAreaView>

@@ -30,8 +30,8 @@ class Api {
     return answer;
   }
 
-  async userList() {
-    const ans = await fetch(`${BASE_API}userlist`);
+  async patientsList(myId) {
+    const ans = await fetch(`${BASE_API}patientslist/${myId}`);
     const answer = await ans.json();
     return answer;
   }
@@ -42,8 +42,8 @@ class Api {
     return answer;
   }
 
-  async getDoctorList() {
-    const ans = await fetch(`${BASE_API}doctorlist`);
+  async getDoctorList(status) {
+    const ans = await fetch(`${BASE_API}doctorlist/${status}`);
     const answer = await ans.json();
     return answer;
   }
@@ -56,6 +56,33 @@ class Api {
 
   async getChat(idPatient) {
     const ans = await fetch(`${BASE_API}chat/${idPatient}`);
+    const answer = await ans.json();
+    return answer;
+  }
+
+  async unlockPatient(idPatient) {
+    const ans = await fetch(
+      `${BASE_API}unlockuser`,
+      this.createHeader({ method: "POST", body: idPatient })
+    );
+    const answer = await ans.json();
+    return answer;
+  }
+
+  async updateData(data) {
+    const ans = await fetch(
+      `${BASE_API}updatedata`,
+      this.createHeader({ method: "PUT", body: data })
+    );
+    const answer = await ans.json();
+    return answer;
+  }
+
+  async acceptDoctor(data) {
+    const ans = await fetch(
+      `${BASE_API}acceptdoctor`,
+      this.createHeader({ method: "PUT", body: data })
+    );
     const answer = await ans.json();
     return answer;
   }

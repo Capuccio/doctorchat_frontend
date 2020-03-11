@@ -5,23 +5,21 @@ import {
   TextInput,
   Button,
   StyleSheet,
-  Picker
+  Picker,
+  Image
 } from "react-native";
 
-const RegisterForm = props => {
-  let doctorListItems = props.doctorList.map((doctorsData, i) => {
-    return (
-      <Picker.Item
-        key={i}
-        label={`${doctorsData.name} ${doctorsData.lastname}`}
-        value={doctorsData._id}
-      />
-    );
-  });
-
+const SettingsForm = props => {
   return (
-    <View style={styles.Register}>
-      <Text style={styles.Title}>REGISTRARSE</Text>
+    <View style={styles.Update}>
+      <Text style={styles.Title}>Configuración</Text>
+
+      <View style={{ marginTop: 20 }}>
+        <Image
+          style={styles.profilePicture}
+          source={{ uri: props.state.localPicture }}
+        />
+      </View>
 
       <TextInput
         style={styles.Input}
@@ -39,16 +37,19 @@ const RegisterForm = props => {
 
       <TextInput
         style={styles.Input}
-        onChangeText={email => props.changeText("email", email)}
-        value={props.state.email}
-        placeholder="Correo"
+        onChangeText={birthday => props.changeText("birthday", birthday)}
+        value={props.state.birthday}
+        placeholder="Fecha de Nacimiento: 01/01/2020"
       />
 
       <TextInput
         style={styles.Input}
-        onChangeText={birthday => props.changeText("birthday", birthday)}
-        value={props.state.birthday}
-        placeholder="Fecha de Nacimiento: 01/01/2020"
+        onChangeText={newPassword =>
+          props.changeText("newPassword", newPassword)
+        }
+        secureTextEntry
+        value={props.state.newPassword}
+        placeholder="Nueva clave"
       />
 
       <Picker
@@ -62,39 +63,30 @@ const RegisterForm = props => {
         <Picker.Item label="Mujer" value="F" />
       </Picker>
 
-      <TextInput
-        style={styles.Input}
-        onChangeText={password => props.changeText("password", password)}
-        secureTextEntry
-        value={props.state.password}
-        placeholder="Clave"
-      />
-
-      {props.registerAs === 1 && (
-        <Picker
-          selectedValue={props.state.doctor}
-          style={styles.DoctorSelect}
-          onValueChange={itemValue => {
-            props.changeText("doctor", itemValue);
-          }}
-        >
-          <Picker.Item label="Su doctor:" value="D" />
-          {doctorListItems}
-        </Picker>
-      )}
+      <View style={styles.Button}>
+        <Button
+          color="#3bd1c5"
+          disabled={props.buttonOptions.DisabledOne}
+          title={props.buttonOptions.ButtonText.imagePicker}
+          onPress={props.handlePictureProfile}
+        />
+      </View>
 
       <View style={styles.Button}>
         <Button
           color="#3bd1c5"
-          title="Registrarse"
+          disabled={props.buttonOptions.DisabledOne}
+          title={props.buttonOptions.ButtonText.update}
           onPress={props.handleRegister}
         />
       </View>
+
       <View style={styles.Button}>
         <Button
           color="#3bd1c5"
+          disabled={props.buttonOptions.DisabledTwo}
           title="Atras"
-          onPress={() => props.navigation.navigate("Login")}
+          onPress={() => props.navigation.navigate("Principal")}
         />
       </View>
     </View>
@@ -102,7 +94,7 @@ const RegisterForm = props => {
 };
 
 const styles = StyleSheet.create({
-  Register: {
+  Update: {
     height: "71%",
     justifyContent: "space-between",
     alignItems: "center",
@@ -112,6 +104,11 @@ const styles = StyleSheet.create({
     fontSize: 36,
     color: "#4f4f4f",
     fontWeight: "bold"
+  },
+  profilePicture: {
+    width: 150,
+    height: 150,
+    borderRadius: 80
   },
   Input: {
     height: 34,
@@ -124,7 +121,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     opacity: 0.85,
     fontSize: 16,
-    marginTop: 30
+    marginTop: 25
   },
   BirthDaySelect: {
     height: 50,
@@ -142,4 +139,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default RegisterForm;
+export default SettingsForm;
