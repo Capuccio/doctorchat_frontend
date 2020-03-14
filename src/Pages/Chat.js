@@ -23,11 +23,13 @@ const Chat = props => {
   const [textChat, setTextChat] = useState("");
   const [editableText, setEditableText] = useState(false);
   const [patientData, setPatientData] = useState();
-  const [receiveChat, setReceiveChat] = useState(true);
+  const receiveChat = useRef(null);
   const chatList = useRef(null);
 
   useEffect(() => {
     let isMounted = true;
+    receiveChat.current = true;
+
     if (!socket.connected) {
       socket.open();
     }
@@ -74,7 +76,7 @@ const Chat = props => {
 
     return () => {
       isMounted = false;
-      setReceiveChat(false);
+      receiveChat.current = false;
     };
   }, []);
 
@@ -92,7 +94,7 @@ const Chat = props => {
     };
 
     arrayChat.push(newMessage);
-    if (receiveChat) {
+    if (receiveChat.current) {
       setChat(arrayChat);
     }
 
@@ -105,7 +107,7 @@ const Chat = props => {
   socket.on("received", async msg => {
     let arrayChat = [...chat];
     arrayChat.push(msg);
-    if (receiveChat) {
+    if (receiveChat.current) {
       setChat(arrayChat);
     }
   });

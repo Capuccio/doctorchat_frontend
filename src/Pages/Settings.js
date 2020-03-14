@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
-  Text,
-  View,
   Platform,
   StatusBar,
   SafeAreaView,
@@ -34,21 +32,32 @@ const Settings = ({ navigation }) => {
   });
 
   useEffect(() => {
+    let isMounted = true;
+
     const getUserData = async () => {
       let answer = await api.getUserData(navigation.getParam("myID"));
 
-      setFormSetting({
-        ...formSetting,
-        name: answer.msg.name,
-        lastname: answer.msg.lastname,
-        birthday: answer.msg.birthday,
-        genre: answer.msg.genre,
-        localPicture: answer.msg.profilePicture
-      });
+      if (answer.error) {
+        Alert.alert(answer.title, answer.msg);
+        return;
+      }
+
+      if (isMounted) {
+        setFormSetting({
+          ...formSetting,
+          name: answer.msg.name,
+          lastname: answer.msg.lastname,
+          birthday: answer.msg.birthday,
+          genre: answer.msg.genre,
+          localPicture: answer.msg.profilePicture
+        });
+      }
     };
 
     getUserData();
-    return () => {};
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handlePictureProfile = async () => {
